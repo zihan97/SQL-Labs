@@ -1,0 +1,98 @@
+Chapter 10 Zihan Zhao
+
+1. select * from Employee where Status = 'PART-TIME'
+
+2. select * from Employee where Year > 2007 order by Hired ASC
+
+3. select * from Parts_Materials where Cost >= 10.99 and Cost <= 29.99 order by Cost ASC
+
+4. select * from Parts_Materials where Cost <> 10.99 order by Cost ASC
+
+5. select * from Parts_Materials where Supplier_ID = 9 
+
+Chapter 11 Zihan Zhao
+
+1. select * from New_Vehicles where Release_Year = 2019
+and Release_Date not like '%-01-%' and Release_Date not like '%-02-%' and Release_Date not like '%-03-%' order by Release_Date ASC
+
+2. select New_Upgrade from Upgrades where Cost between 100 and 200 and Type = 'Middle'
+
+3. select * from New_Vehicles where Release_Year = 2019 and Release_Date like '%-06-%'
+
+4. select * from Upgrades where Assembly between 40 and 100 
+
+5. select * from Employee where Hired between '2010-09-01' and '2011-10-31' and Income between 45000 and 55000 order by Income ASC
+
+Chapter 12 Zihan Zhao
+
+1. select Name, last, State from Customer where State in ('NY', 'CO', 'AK', 'FL')
+
+2. select Customer_ID, Employee_ID, Year, SalesPrice from Purchases 
+where Customer_ID in (select ID from Customer where Name in ('Robin Selle', 'Astrid Jara', 'Kacey Tea'))
+
+3. select * from Employee where ID in (select Employee_ID from Purchases where YEAR NOT BETWEEN 2017 AND 2018)
+
+4. select Customer_ID from Purchases where Customer_ID not in (select ID from Customer)
+
+5. select * from Customer where ID in (select Customer_ID from Purchases where Month = 12 or Month = 01)
+
+Chapter 13 Zihan Zhao
+
+1. select distinct State from Suppliers
+
+2. select State, Count(State) as CountNumber from Customer Group by State order by State ASC
+
+3. select Generation, Count(Generation) AS CountNumber from Customer Group by Generation
+
+4. select Release_Year, Count(Release_Year) as CountNumber from New_Vehicles Group by Release_Year
+
+5. select New_Upgrade, Count(*) as NumberUpdates, Cost from Upgrades group by New_Upgrade, Cost
+
+Chapter 14 Zihan Zhao
+
+1. select top 5 Quantities_per_Order, Name from Parts_Materials
+
+2. select top 15 percent Name, Cost from Parts_Materials order by Cost DESC
+
+3. select top 10 Description, Release_Date from New_Vehicles order by Release_Date DESC
+
+4. select top 10 Product_ID, Sum(SalesPrice) as TotalSales from Purchases group by Product_ID order by TotalSales DESC
+
+5. select top 10 Employee_ID, count(Employee_ID) as NumberSales from Purchases group by Employee_ID order by NumberSales DESC
+
+Chapter 15 Zihan Zhao
+
+1. select distinct New_Upgrade, sum(Cost + Assembly) as TotalCost from Upgrades group by New_Upgrade
+
+2. select New_Upgrade, sum(Markup- Cost - Assembly ) as TotalProfit from Upgrades group by New_Upgrade
+
+3. select New_Upgrade, sum(Markup - 0.9*Cost - Assembly) as DiscountProfit, sum(Markup- Cost - Assembly ) as TotalProfit from Upgrades group by New_Upgrade
+
+4. select New_Upgrade, iif(sum(Markup- Cost - Assembly ) >100, 'Good Margin', 'Bad Margin') as DiscountProfit,
+sum(Markup- Cost - Assembly ) as DiscountMargin from Upgrades group by New_Upgrade
+
+5. select New_Upgrade, iif(Type = 'Base', 0.88*Cost, iif(Type = 'Middle', 0.85*Cost, 0.83*Cost)) as DiscountPrice from Upgrades
+
+Chapter 16 Zihan Zhao
+
+1. select (Position + Name) as PositionGroup from Employee order by PositionGroup
+
+2. select 'Dear ' + Owner + ',' + ' owner of ' + Company + 
+'. Because of the recent downtown of the market, we request a discount of 5%.' as Supplier_Letter from Suppliers
+
+3. select 'Dear ' + Name + ', we appreciate your work and delication, professionalism, and expertise. 
+Here is to another fantatistic 5 year on the team' as Employee_letter_of_Appreciation from Employee where Year < 2013
+select * from Employee
+
+4. select case 
+when State = 'NY' then 'Dear' + Name + '. In the near future, be on the lookout for a discount of 15% on the future vehicles'
+when State = 'NC' then 'Dear' + Name + '. In the near future, be on the lookout for a discount of 25% on the future vehicles'
+when State = 'AZ' then 'Dear' + Name + '. In the near future, be on the lookout for a discount of 20% on the future vehicles'
+End as CustomerLetter from Customer where State in ('NY', 'NC', 'AZ')
+
+5. select case
+when position = 'Analyst I' then 'Dear' + Name + ', you have worked very hard this year and the company has decided to reward you with a 10% bonus!'
+when position = 'Sr Associate I' then 'Dear' + Name + ', you have worked very hard this year and the company has decided to reward you with a 15% bonus!'
+when position = 'Sr Consultant' then 'Dear' + Name + ', you have worked very hard this year and the company has decided to reward you with a 20% bonus!'
+end as EmployeeBonus from Employee where Position in ('Analyst I', 'Sr Associate I', 'Sr Consultant') order by Name
+

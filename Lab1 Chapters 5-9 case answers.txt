@@ -1,0 +1,160 @@
+Chapter 5 Zihan Zhao
+
+1.
+select *
+into Product_Backup
+from Product
+
+2. 
+select Description, TYPE
+into Product_Backup2
+from Product
+where TYPE in ('Family', 'Utility', 'Sports')
+
+3.
+create table Product3(
+[ID]int identity (1,1) Primary key,
+[Description] nvarchar(255) null,
+[MPG_HWY] float null,
+[MPG_CITY] float null,
+[TYPE] nvarchar(255) null)
+
+4.
+insert into Product3(Description, MPG_HWY, MPG_CITY, TYPE)
+select Description, MPG_HWY, MPG_CITY, TYPE
+from Product
+where MPG_HWY > 30
+
+5. 
+select * 
+from Product
+where MPG_HWY > 30
+order by DESCRIPTION 
+
+Chapter 6 Zihan Zhao
+
+1.
+select *
+from Customer
+where State = 'NY' OR State = 'CO' OR State = 'TX' OR State = 'AZ'
+
+2.
+select *
+from Customer
+where State in ('NY', 'CO', 'TX', 'AZ')
+
+3.
+select *
+from Customer
+where State = 'NY'
+UNION
+select *
+from Customer
+where State = 'CO'
+UNION
+select *
+from Customer
+where State = 'TX'
+UNION
+select *
+from Customer
+where State = 'AZ'
+
+4.
+Select *
+from Customer
+where State <> 'NY' AND State <> 'CO' AND State <> 'TX' AND State <> 'AZ'
+
+5. 
+Select *
+from Customer
+where Generation <> 'Millennial'
+
+Chapter 7 Zihan Zhao
+
+1.
+select State, County, Last, First
+from Customer
+Order by State, County ASC
+
+2.
+select top 10 Product_ID, Upgrade_ID, Release_Year, Release_Date
+from New_Vehicles
+order by Release_Date ASC
+
+3.
+select top 10 New_Upgrade, Cost
+from Upgrades
+order by Cost DESC
+
+4. 
+select Name, Position, Hired
+from Employee
+order by Hired ASC
+
+5. 
+select Name, County, State
+from Customer
+order by 
+case State
+when 'MA' then 1
+when 'NY' then 2
+when 'FL' then 3
+when 'CA' then 4
+else 5
+end
+
+Chapter 8 Zihan Zhao
+
+1.
+select First, Last, Age, Generation, Salary
+from Customer
+where Last like 'D%'
+
+2.
+select Name, Age, Generation, Salary
+from Customer
+where Last like '[a-f]%'
+
+3.
+select Name, Age, Generation, Salary
+from Customer
+where Last like '[^a-f]%'
+
+4.
+select *
+from Employee
+where Position like '%ant'
+
+5.
+select *
+from Employee
+where Status like '%em%'
+
+Chapter 9 Zihan Zhao
+
+1.
+select *
+from Customer
+where Generation <> 'Baby Boomer'
+
+2.
+select PartLabel, Name, Cost
+from Parts_Materials
+where Name like '%Side%'
+
+3.
+select *
+from Customer
+where Last like 'H%'
+order by First ASC
+
+4.
+create index IndDescription on New_Vehicles(Description)
+
+5.
+select New_Upgrade, Vehicle, Markup
+from Upgrades
+where Markup like '[3]__' or Markup like '[1]___'
+order by Markup ASC
+

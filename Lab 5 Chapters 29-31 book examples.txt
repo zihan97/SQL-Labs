@@ -1,0 +1,134 @@
+Chapter 29 Zihan Zhao
+
+330.
+SELECT * FROM Customers WHERE CustomerID IN (SELECT CustomerID from tbls_Orders)
+
+SELECT firstname, lastname, address, orderdate, shippingcost FROM Customers
+INNER JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+
+SELECT firstname,lastname,address FROM Customers INNER JOIN Orders ON Customers.CustomerID = Orders.CustomerID GROUP BY firstname, lastname, address ORDER BY lastname
+
+331.
+SELECT lastname, firstname,address,orderdate,shippingcost
+FROM Customers LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+
+332.
+SELECT lastname,firstname,Address,OrderDate,Shippingcost FROM Customers
+RIGHT JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+
+333.
+SELECT lastname,firstname,address,orderdate,shippingcost FROM Customers FULL OUTER JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+
+334.
+SELECT * FROM Suppliers CROSS JOIN Products
+
+SELECT *
+FROM Suppliers,Products
+
+335.
+SELECT SalesReps.lastname,SalesReps.city,companyname,Suppliers.city FROM 
+Suppliers CROSS JOIN SalesReps WHERE Suppliers.city = SalesReps.City
+
+336.
+SELECT SalesReps.lastname, SalesReps.city,companyname,Suppliers.city
+FROM Suppliers INNER JOIN SalesReps ON Suppliers.City = SalesReps.City
+
+338.
+SELECT p1.ProductID,p1.productname,p2.productname AS Component1 FROM tbls_Products_Joins AS p1 INNER JOIN tbls_Products_Joins AS p2 ON p2.Comp1 = p1.ProductID
+
+339.
+SELECT p1.productID,p1.productname,p2.productname AS Component1 FROM tbls_Products_Joins AS p1 LEFT JOIN tbls_Products_Joins AS p2 ON p2.Comp1 = p1.ProductID
+
+Chapter 30 Zihan Zhao
+
+342. 
+SELECT * FROM Customers WHERE CustomerID IN (SELECT CustomerID FROM Orders WHERE (DATEPART(q,[orderdate])=4 AND year([orderdate]) = 2014))
+
+343.
+SELECT * FROM Customers C WHERE EXISTS (SELECT CustomerID FROM Orders O WHERE C.CustomerID = O.CustomerID AND (DATEPART(q,[orderdate])=4 and year([orderdate]) = 2014))
+
+344.
+SELECT * FROM Customers WHERE CustomerID NOT IN (SELECT CustomerID FROM tbls_Orders
+WHERE OrderDate BETWEEN '2014/1/1' AND '2014/6/30')
+
+345.
+SELECT * FROM Customers C WHERE NOT EXISTS (SELECT CustomerID FROM tble_Orders O WHERE C.CustomerID = O.CustomerID AND OrderDate BETWEEN '2014/1/1' AND '2014/6/30')
+
+346.
+SELECT * FROM tbls_Orders WHERE CustomerID NOT IN (SELECT CustomerID FROM Customers)
+
+347.
+SELECT * FROM Orders WHERE ShippedDate = (SELECT max(ShippedDate) FROM Orders)
+
+348.
+SELECT * FROM Customers WHERE exists (SELECT * FROM SalesReps WHERE Customers.City = SalesReps.City)
+
+349.
+SELECT productname,productunitprice FROM Products WHERE Productunitprice > (SELECT avg(ProductUnitPrice) FROM Products) ORDER BY ProductUnitPrice DESC
+
+350.
+SELECT * FROM Orders O WHERE Exists (SELECT orderid, sum([unitprice]*[quantity])
+FROM ProductsOrders P WHERE O.OrderID = P.OrderID GROUP BY OrderID HAVING (SUM([unitprice]*[quantity])) > 500)
+
+351.
+SELECT * FROM orders WHERE OrderID IN (SELECT OrderID FROM ProductsOrders WHERE Discount = 0)
+
+352.
+UPDATE tblS_Products_UPD SET ProductUnitPrice = ProductUnitPrice *(1+0.2) WHERE SupplierID IN (SELECT SupplierID FROM Suppliers WHERE City = 'Boston' OR city = 'Dallas')
+
+353.
+DELETE FROM tbls_Orders_Del WHERE CustomerID IN (SELECT CustomerID FROM Customers WHERE City = 'Los Angeles' OR City = 'Orlando')
+
+354.
+SELET Orderid, (SELECT Count(*) FROM ProductsOrders P WHERE O.OrderID = P.OrderID AND (Discount=0) AS '0%')
+(SELECT Count(*) FROM ProductsOrders P WHERE O.OrderID = P.OrderID AND (Discount=0.15) AS '15%')
+(SELECT Count(*) FROM ProductsOrders P WHERE O.OrderID = P.OrderID AND (Discount=0.2) AS '20%') FROM Orders AS O
+
+Chapter 31 Zihan Zhao
+
+357.
+CREATE PROCEDURE sp_GetProductData AS SELECT ProductName,QuantityPerUnit,ProductUnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,SKU
+FROM Products
+exec sp_GetProductData
+
+358.
+CREATE PROCEDURE sp_Param_UnitsInStock @UnitsInStock smallint AS SELECT ProductName,QuantityPerUnit,ProductUnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,SKU
+FROM Products WHERE UnitsInStock = @UnitsInStock
+execute sp_Param_UnitsInStock @UnitsInStock = 15
+
+359.
+CREATE PROCEDURE sp_Param_Multiple @UnitsInStock smallint, @UnitsOnOrder smallint
+AS SELECT ProductName,QuantityPerUnit,ProductUnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,SKU
+FROM Products WHERE UnitsInStock = @UnitsInStock AND UnitsOnOrder = @UnitsOnOrder
+execute sp_Param_Multiple @UnitsInStock = 50, @UnitsOnOrder = 0
+
+360.
+CREATE PROCEDURE sp_Param_GetSupplierID @ProductID int, @SupplierID int output AS 
+SELECT @SupplierID = SupplierID FROM Products WHERE ProductID = @ProductID
+
+Declare @SuppleirID int execute sp_Param_GetSupplierID @ProductID = 15, @SupplierID = @SupplierID out SELECT @SuppleirID AS SupplierID
+
+361.
+CREATE PROCEDURE sp_Cond_Inventory @UnitPrice money, @Discount decimal(2,2)
+AS IF @UnitPrice > (SELECT AVG(ProductUnitPrice) FROM Products)
+	BEGIN
+	SELECT ProductName, QuantityPerUnit,ProductUnitPrice as OriginalPrice, ProductUnitPrice*(1-@Discount) AS NewPrice, SKU
+	FROM Products
+	END
+ELSE
+	BEGIN
+	SELECT ProductName, QuantityPerUnit,ProductUnitPrice as OriginalPrice, ProductUnitPrice*(1-0.05) NewPrice, SKU
+	FROM Products
+	END
+execute sp_Cond_Inventory @UnitPrice = 40,@Discount = 0.3
+execute sp_Cond_Inventory @UnitPrice = 10,@Discount = 0.2
+
+363.
+CREATE PROCEDURE sp_EroorHandling @ProductID int, @SupplierID int, @ProductName text
+AS  BEGIN TRY INSERT INTO tbls_Products_sp(ProductID,SupplierID,ProductName)
+VALUES(@ProductID,@SupplierID,@ProductName) END TRY BEGIN CATCH
+PRINT 'Supplier does not exist' END CATCH
+
+execute sp_EroorHandling @ProductID = 71,@SupplierID =11, @ProductName = 'Chocolate'
+execute sp_EroorHandling @ProductID = 72,@SupplierID =9, @ProductName = 'Chocolate'
+

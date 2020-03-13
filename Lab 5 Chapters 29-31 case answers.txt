@@ -1,0 +1,33 @@
+Chapter 29 Zihan Zhao
+
+1. select * from Parts_Materials RIGHT JOIN Suppliers ON Parts_Materials.Supplier_ID = Suppliers.ID
+
+2. select Company, Owner, County, Contract_Length, PartLabel, Name from Suppliers LEFT JOIN Parts_Materials ON Parts_Materials.Supplier_ID = Suppliers.ID order by Contract_Length DESC
+
+3. select PartLabel, Name, Company, Owner, County, Contract_Length from Parts_Materials LEFT JOIN Suppliers ON Parts_Materials.Supplier_ID = Suppliers.ID ORDER BY Company
+
+4. select * from Parts_Materials where Supplier_ID not in (SELECT ID from Suppliers)select * from Parts_Materials LEFT JOIN Suppliers ON Parts_Materials.Supplier_ID = Suppliers.ID where Parts_Materials.Supplier_ID is NULL
+
+5. select * FROM Parts_Materials LEFT JOIN Suppliers ON Parts_Materials.Supplier_ID = Suppliers.ID where Suppliers.ID is NULL      
+Chapter 30 Zihan Zhao
+1. select Name, Position FROM Employee WHERE ID IN (SELECT Employee_ID FROM Purchases WHERE Year BETWEEN 2015 AND 2016)
+
+2. select Name, Position FROM Employee WHERE Position = 'Sales' AND ID NOT IN (SELECT Employee_ID FROM Purchases WHERE Year IN (2017,2018))
+3. select top 1 ID, Name, Last, First, Position, Type, Status, Hired, Month,Year,Income FROM Employee ORDER BY Hired desc
+
+4. select New_Upgrade, Vehicle, Cost FROM Upgrades  WHERE Cost > (SELECT AVG(Cost) FROM Upgrades)
+
+5. select name, (SELECT Count(Employee_ID) FROM Purchases P WHERE E.ID=P.Employee_ID AND YEAR =2015 ) AS '2015', (SELECT Count(Employee_ID) FROM Purchases P WHERE E.ID=P.Employee_ID AND YEAR =2016 ) AS '2016', (SELECT Count(Employee_ID) FROM Purchases P WHERE E.ID=P.Employee_ID AND YEAR =2017 ) AS '2017' FROM Employee AS E WHERE Position = 'Sales' ORDER BY Name    
+
+
+Chapter 31 Zihan Zhao
+1. create procedure sp_Chapter31_q1 AS SELECT First, Last, County, State FROM Customerexecute sp_Chapter31_q1
+
+2. create procedure sp_Chapter31_q2 AS SELECT First, Last, State, Salary, Generation FROM Customer WHERE Generation = 'Millennial'execute sp_Chapter31_q2
+
+3. create procedure sp_Chapter31_q3 @County nvarchar(255), @State nvarchar(255) AS SELECT FIRST, LAST, County, State FROM Customer WHERE County = @County AND State= @Stateexecute sp_Chapter31_q3 @County='Albany', @State='NY'
+
+	4. create procedure sp_Chapter31_q4 @Last nvarchar(255) AS SELECT ID FROM Employee WHERE Last = @Lastexecute sp_Chapter31_q4 @Last = 'Catt'
+
+5. create procedure sp_Chapter31_q5 @Label nvarchar(255) AS SELECT PartLabel FROM Parts_Materials WHERE PartLabel LIKE @Label+'%'execute sp_Chapter31_q5 @Label = 'Door'
+

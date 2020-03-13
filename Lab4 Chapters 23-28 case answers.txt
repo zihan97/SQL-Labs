@@ -1,0 +1,92 @@
+Chapter 23 Zihan Zhao
+
+1.select * from Parts_Materials where Sourced IS NULL
+
+2. SELECT Count(*) as TotalNulls from Parts_Materials where Cost IS NULL 
+
+3. select Product_ID, count(PurchaseNumber) as NumberOfOrders, avg(SalesPrice) as AvgOrder, sum(SalesPrice) as TotalAmount from Purchases
+group by Product_ID 
+
+4. select * from Purchases where SalesPrice IS NULL
+
+5. select Product_ID, count(PurchaseNumber) as NumberOfOrders, avg(SalesPrice) as AvgOrder, sum(SalesPrice) as TotalAmount from Purchases
+where PurchaseNumber IS NOT NULL group by Product_ID
+
+Chapter 24 Zihan Zhao
+
+1. select New_Upgrade, Vehicle, cast(Markup as Int) as Markup from Upgrades_Upd
+
+2. select New_Upgrade, Vehicle, convert(Int, Markup) as Markup from Upgrades_Upd
+
+3. select Name, Position, convert(date, Hired) as HiredDate from Employee
+
+4. select Name, Position, Year as HiredDate from Employee
+
+5. select New_Upgrade, convert(Int, (Cost + Assembly)) as TotalCost from Upgrades
+
+Chapter 25 Zihan Zhao
+
+1. select left(Name, charindex(' ', Name)) as NewName, cost from Parts_Materials where right(Name, charindex(' ' , Name)) <> ' '
+
+2. select PartLabel, replace(Name, 'inner', 'interior') as NewProductName, Cost from Parts_Materials
+
+3. select left(Serial, charindex('-', Serial)-1) as NewSerial, Cost from Parts_Materials
+
+4. select left(Serial, 2) as NewSerial, sum(Cost) as TotalCost from Parts_Materials group by left(Serial, 2) ORDER BY TotalCost DESC
+
+5. select right(Serial, 1) as NewRightSerial, sum(Cost) as TotalCost from Parts_Materials group by right(Serial, 1) 
+
+Chapter 26 Zihan Zhao
+
+1. select * from (select Product_ID, datepart(ww,date) as weeks, salesprice
+FROM Purchases) as Crosstab pivot (SUM(salesprice) for weeks IN ([24],[25],[26],[27],[28])) as CrossTabTable order by Product_ID
+
+2. select datepart(yyyy, [Date]) as [Year], datepart(ww, [Date]) as Week, sum(SalesPrice) as Totalsales
+from Purchases where datepart(ww, [Date]) = 12 group by datepart(yyyy, [Date]), datepart(ww, [Date])
+
+3. select Product_ID, sum(SalesPrice) as TotalSales from Purchases where datepart(m, [Date]) in (3, 4, 5) and datepart(yyyy, [Date]) = 2017 
+group by Product_ID order by TotalSales DESC
+
+4. select Product_ID, customer_ID, Date, dateadd(d, 15, Date) as DeliveryDate from Purchases
+
+5.select Name, Position, datediff(yyyy, Hired, GetDate()) as NumberOfYears from Employee where datediff(yyyy, Hired, GetDate()) > 7
+
+Chapter 27 Zihan Zhao
+
+1.
+Update Customer_Upd SET County = 'Schenectady' WHERE Name = 'Nana Knopf'
+
+2.
+Update Upgrades_Upd SET Cost = 125 WHERE New_Upgrade = 'Automatic Trunk'
+
+3.
+Update Upgrades_Upd SET Cost = Cost + 25 WHERE Type = 'Base'
+
+4.
+Update Upgrades_Upd SET Markup = Markup * 1.1 WHERE New_Upgrade = 'Heated Seats'
+
+5.
+Update Parts_Materials_Upd SET Cost = CASE
+WHEN Sourced = 'Y' THEN 1.05 * Cost
+WHEN Sourced = 'N' THEN 1.1 * Cost
+END
+
+Chapter 28 Zihan Zhao
+
+1.
+DELETE  FROM Customer_Del WHERE Name = 'Nana Knopf'
+
+2.
+DELETE  FROM New_Vehicles_Del WHERE Description = 'New_Vehicle3' and Release_Year = 2018
+
+3.
+Delete FROM Customer_Del WHERE Age > 65
+
+4.
+DELETE FROM Purchases_Del WHERE Customer_ID IN (SELECT ID FROM Customer_Del WHERE Generation = 'Millennial')
+
+5.
+DELETE FROM Purchases_Del WHERE Year Between 2015 and 2016 and Product_ID IN(SELECT ID
+FROM Product WHERE TYPE = 'FAMILY')
+
+

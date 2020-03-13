@@ -1,0 +1,366 @@
+
+Chapter 17 Zihan Zhao
+
+174.
+SELECT LastName, sum(quantity) AS TotalUnits FROM tbls_customersGR GROUP BY LastName
+
+175.
+SELECT LastName, sum(unitprice*quantity) AS OrderTotal FROM tbls_customersGR GROUP BY LastName
+
+176.
+SELECT LastName, sum(unitprice*quantity) AS OrderTotal,AVG(unitprice*quantity) AS AvgOrder
+FROM tbls_customersGR GROUP BY LastName
+
+177.
+SELECT LastName, sum(unitprice*quantity) AS OrderTotal FROM tbls_customersGR
+WHERE orderid<>509 GROUP BY LastName
+
+178.
+SELECT LastName, sum(unitprice*quantity) AS OrderTotal FROM tbls_customersGR
+GROUP BY LastName HAVING SUM(unitprice*quantity) >100
+
+179.
+SELECT LastName, sum(unitprice*quantity) AS OrderTotal FROM tbls_customersGR
+WHERE productname <> 'Chocolate Chip Brownie' GROUP BY LastName HAVING SUM(unitprice*quantity) >100
+
+180.
+SELECT LastName, sum(unitprice*quantity) AS OrderTotal FROM tbls_customersGR
+WHERE orderid <> 509 GROUP BY LastName HAVING SUM(unitprice*quantity) >100
+ORDER BY Lastname DESC
+
+181.
+SELECT OrderID, Avg(unitprice*quantity) AS AverageOrderAmount FROM tbls_customersGR
+GROUP BY OrderID
+
+SELECT OrderID, Avg(unitprice*quantity) AS AverageOrderAmount FROM tbls_customersGR
+GROUP BY OrderID
+
+182.
+SELECT lastname,orderid,sum([unitprice]*[quantity]) AS OrderTotal from tbls_customersGR
+GROUP BY lastname,orderid
+
+Chapter 18 Zihan Zhao
+
+185.
+SELECT count(orderid) AS NumberofOrders FROM tbls_customersAG
+
+186.
+SELECT count(lastname) AS NumberofCustomers FROM tbls_customersAG
+
+SELECT count(*) AS NumberofCustomers FROM tbls_customersAG
+
+SELECT count(distinct lastname) AS CountUniqueCustomers FROM tbls_customersAG
+
+187.
+SELECT COUNT(Distinct OrderID) AS NumberofOrders FROM tbls_customersAG
+
+188.
+SELECT lastname, count(orderid) AS NumberofOrders FROM tbls_customersAG GROUP BY lastname
+
+189.
+SELECT lastname, count(orderid) AS NumberofOrders,avg(unitprice*quantity) AS AvgOrderAmount FROM tbls_customersAG GROUP BY lastname
+
+190.
+SELECT lastname, count(orderid) AS NumberofOrders,avg(unitprice*quantity) AS AvgOrderAmount FROM tbls_customersAG WHERE lastname NOT IN('Johnson','Madsen') 
+GROUP BY lastname
+
+191.
+SELECT lastname, count(orderid) AS NumberofOrders,avg(unitprice*quantity) AS Avg,SUM(unitprice*quantity) AS Total FROM tbls_customersAG 
+WHERE lastname NOT IN('Johnson','Madsen') GROUP BY lastname
+
+192.
+SELECT lastname,count(orderid) AS Num,min(unitprice*quantity) AS Min, avg(unitprice*quantity) AS Avg, sum(unitprice*quantity) AS Total
+FROM tbls_customersAG WHERE lastname NOT IN('Johnson','Madsen') GROUP BY lastname
+
+193.
+SELECT lastname,count(orderid) AS Num,min(unitprice*quantity) AS Min, avg(unitprice*quantity) AS Avg, max(unitprice*quantity) AS Max,sum(unitprice*quantity) AS Total FROM tbls_customersAG WHERE lastname NOT IN('Johnson','Madsen') GROUP BY lastname
+
+194.
+SELECT lastname,count(orderid) AS Num,min(unitprice*quantity) AS Min, avg(unitprice*quantity) AS Avg, max(unitprice*quantity) AS Max,sum(unitprice*quantity) AS Total,stdev(unitprice*quantity) As stdev, var(unitprice*quantity) AS var
+FROM tbls_customersAG WHERE lastname NOT IN('Johnson','Madsen') GROUP BY lastname
+
+195.
+SELECT lastname,count(orderid) AS Num,min(unitprice*quantity) AS Min, avg(unitprice*quantity) AS Avg, sum(unitprice*quantity) AS Total
+FROM tbls_customersAG WHERE productid NOT IN(13,56,30) GROUP BY lastname
+HAVING sum(unitprice*quantity) > 100 AND avg(unitprice*quantity) > 40 AND convert(smallint,stdev(unitprice*quantity))<20
+
+Chapter 19 Zihan Zhao
+
+198.
+SELECT * FROM( SELECT CustomerState, OrderYear, OrderTotal FROM View_CrosstabBase)
+AS Crosstab PIVOT(sum(OrderTotal) FOR Orderyear IN ([2012],[2013],[2014])) AS CrossTabTable
+
+199.
+SELECT * FROM (SELECT CustomerCity,OrderYear,OrderTotal FROM View_CrosstabBase)
+AS Crosstab PIVOT(sum(OrderTotal) FOR Orderyear IN ([2012],[2013],[2014])) AS CrossTabTable
+
+200.
+SELECT * FROM (SELECT CustomerLastName,OrderYear,OrderTotal FROM View_CrosstabBase)
+AS Crosstab PIVOT(sum(OrderTotal) FOR Orderyear IN ([2012],[2013],[2014])) AS CrossTabTable
+
+201.
+SELECT * FROM (SELECT CustomerLastName+' '+CustomerFirstName AS CustomerName,OrderYear,OrderTotal FROM View_CrosstabBase) AS Crosstab
+PIVOT(sum(OrderTotal) FOR Orderyear IN ([2012],[2013],[2014])) AS CrossTabTable
+
+202.
+SELECT * FROM (SELECT CustomerState, OrderYear, OrderTotal FROM View_CrosstabBase
+WHERE CustomerState IN ('CA','NY','FL')) AS Crosstab PIVOT(sum(OrderTotal)
+FOR Orderyear IN ([2012],[2013],[2014])) AS CrossTabTable
+
+203.
+SELECT * FROM(SELECT CustomerState, OrderYear, OrderTotal FROM View_CrosstabBase)
+AS Crosstab PIVOT(sum(OrderTotal) FOR Orderyear IN ([2013],[2014])) AS CrossTabTable
+
+204.
+SELECT * FROM( SELECT CustomerState, OrderYear, OrderTotal FROM View_CrosstabBase WHERE Customercity NOT IN ('Albany')) AS Crosstab PIVOT(sum(OrderTotal) FOR Orderyear IN ([2012],[2013],[2014])) AS CrossTabTable
+
+205.
+SELECT * FROM(SELECT CustomerState, OrderYear, IIF(OrderTotal >= 10000, ordertotal*0.9,ordertotal*0.95) AS OrderTotal FROM View_CrosstabBase) AS Crosstab PIVOT(sum(OrderTotal) FOR Orderyear IN ([2012],[2013],[2014])) AS CrossTabTable
+
+206.
+SELECT * FROM (SELECT CASE
+WHEN unitprice >= 25 THEN 'Expensive Products Total Sales'
+WHEN unitprice < 25 THEN 'Inexpensive Products Total Sales'
+END
+As UnitPrice, OrderYear, OrderTotal FROM View_CrosstabBase)
+AS Crosstab
+PIVOT (sum(OrderTotal) FOR Orderyear IN ([2012],[2013],[2014])) AS CrossTabTable
+
+
+Chapter 20 Zihan Zhao
+
+209.
+SELECT ProductID,ProductName,QuantityPerUnit,iif([productid]=14,[productunitprice]*0.5,[productunitprice]) AS ProductPrice FROM Products
+
+SELECT ProductID,ProductName,QuantityPerUnit, CASE
+WHEN productid = 14 THEN ProductUnitPrice*0.5
+WHEN productid <> 14 THEN ProductUnitPrice
+END As ProductPrice FROM Products
+
+210.
+SELECT State,lastname,firstname,ordertotal,
+iif([state] = 'NY' OR [state] = 'CA' OR [state] = 'tx',0.20,0.10)
+AS Discount FROM View_Conditions
+
+SELECT State,lastname,firstname,ordertotal,
+CASE WHEN [state] = 'NY' OR [state] = 'CA' OR [state] = 'tx' THEN 0.20
+ELSE 0.10
+END AS Discount FROM View_Conditions
+
+211.
+SELECT lastname,firstname,ordertotal,
+IIF(ORDERTOTAL<200,0,
+IIF(ORDERTOTAL>=200 AND ordertotal < 200,0.05,
+iif(ordertotal >=300 And ordertotal < 500,0.10,0.25)))
+AS Discount FROM View_Conditions
+
+SELECT lastname,firstname,ordertotal,
+case
+when ORDERTOTAL < 200 then 0
+when ORDERTOTAL >=200 AND ordertotal < 300 then 0.05
+when ordertotal >=300 And ordertotal < 500 then 0.10
+when ordertotal > 500 then 0.25
+end AS Discount FROM View_Conditions
+
+212.
+SELECT State,lastname,firstname,ordertotal,
+CASE
+WHEN state='NY' THEN 0.20
+WHEN state='AZ' THEN 0.15
+WHEN state='CO' THEN 0.12
+WHEN state='FL' THEN 0.18
+WHEN state='MA' THEN 0.18
+ELSE 0.10
+END AS Discount FROM View_conditions
+
+213.
+SELECT Orderid,lastname,firstname,state,
+CASE
+WHEN ordertotal >= 200 and ordertotal < 300 THEN ordertotal*(1-0.1)
+WHEN ordertotal > 300 and ordertotal <= 500 THEN ordertotal*(1-0.15)
+WHEN ordertotal >= 500 THEN ordertotal*(1-0.2)
+ELSE ordertotal
+END AS DiscountedOrders FROM view_conditions WHERE state IN ('AZ','CO','TX','FL')
+ORDER BY ordertotal DESC
+
+214.
+SELECT ProductName,UnitsInStock,UnitsOnOrder,
+CASE
+WHEN Productunitprice*quantityperunit < 500 THEN 'Economical'
+WHEN Productunitprice*quantityperunit >= 500 AND Productunitprice*quantityperunit < 1000 THEN 'Moderate'
+WHEN Productunitprice*quantityperunit > 1000 THEN 'Expensive'
+END AS PricingCategory FROM Products ORDER BY ProductUnitPrice*QuantityPerUnit DESC
+
+215.
+SELECT lastname, year(orderdate) as OrderYear,
+SUM(
+CASE
+WHEN Unitprice*quantity < 5000 THEN Unitprice*quantity*0.1 + 500
+WHEN Unitprice*quantity >= 5000 AND unitprice*quantity < 10000 THEN Unitprice*quantity*0.15 + 1000
+WHEN Unitprice*quantity >= 10000 AND unitprice*quantity < 15000 THEN Unitprice*quantity*0.2 + 3000
+WHEN Unitprice*quantity >= 15000 THEN Unitprice*quantity*0.25 + 5000
+END
+)
+AS CommissionAndBonus
+FROM SalesReps INNER JOIN( Orders INNER JOIN ProductsOrders ON Orders.OrderID = ProductsOrders.OrderID) ON SalesReps.SalesRepID = Orders.SalesRepID
+GROUP BY lastname, YEAR(OrderDate)
+Having YEAR(OrderDate) = 2014
+order by Sum(UnitPrice*quantity) DESC
+
+216.
+UPDATE tbls_products_upd
+SET ProductUnitPrice = 
+CASE
+WHEN supplierid=1 THEN ProductUnitPrice*(1.1)
+WHEN supplierid=2 THEN ProductUnitPrice*(1.08)
+WHEN supplierid=3 THEN ProductUnitPrice*(1.07)
+WHEN supplierid=4 THEN ProductUnitPrice*(1.05)
+WHEN supplierid=5 THEN ProductUnitPrice*(1.03)
+WHEN supplierid=6 THEN ProductUnitPrice*(1.02)
+WHEN supplierid=7 THEN ProductUnitPrice*(1.03)
+WHEN supplierid=8 THEN ProductUnitPrice*(1.07)
+WHEN supplierid=9 THEN ProductUnitPrice*(1.11)
+WHEN supplierid=10 THEN ProductUnitPrice*(1.08)
+END
+
+217.
+SELECT * FROM (SELECT 
+CASE
+WHEN CustomerCity IN ('New York', 'Los Angeles') THEN 'BigCities'
+WHEN CustomerCity NOT IN ('New York', 'Los Angeles') THEN 'SmallCities'
+END AS UnitPrice, OrderYear, OrderTotal FROM View_CrosstabBase) AS Crosstab
+PIVOT (SUM(OrderTotal) FOR OrderYear IN ([2012],[2013],[2014])) AS CrossTabTable
+
+
+Chapter 21 Zihan Zhao
+
+220.
+SELECT lastname,firstname,city,state,zip FROM tbls_customers_un1
+UNION
+SELECT lastname,firstname,city,state,zip FROM tbls_customers_un2
+
+221.
+SELECT lastname,firstname,city,state,zip FROM Customers
+UNION
+SELECT companyname,contactname,city,state,zip FROM Suppliers
+
+222.
+SELECT lastname,firstname,city,state,zip FROM tbls_customers_un1
+UNION
+SELECT lastname,firstname,city,state,zip FROM tbls_customers_un2
+UNION
+SELECT companyname,contactname,city,state,zip FROM Suppliers
+
+223.
+SELECT lastname,firstname,city,state,zip FROM tbls_customers_un1
+UNION ALL
+SELECT lastname,firstname,city,state,zip FROM tbls_customers_un2
+
+224.
+SELECT lastname,firstname,city,state,zip FROM tbls_customers_un1
+UNION
+SELECT lastname,firstname,city,state,zip FROM tbls_customers_un2 ORDER BY lastname
+
+225.
+SELECT lastname,firstname,city,state,zip
+FROM tbls_customers_un1
+WHERE state = 'NY'
+UNION
+SELECT lastname,firstname,city,state,zip FROM tbls_customers_un2 
+WHERE state = 'TX' ORDER BY State
+
+226.
+SELECT lastname,firstname,city,state,zip,CustomerID FROM tbls_customers_un1
+UNION
+SELECT 'zTotal customer count',' ',' ',' ',' ',Count(CustomerID) FROM tbls_customers_un1
+ORDER BY lastname ASC
+
+227.
+SELECT lastname, firstname,city,state,zip INTO Temp_UnionTable1 FROM tbls_customers_un1
+UNION
+SELECT lastname, firstname,city,state,zip FROM tbls_customers_un2
+
+228.
+CREATE TABLE TempTable_Union_InsertInto
+(
+CustomerID int PRIMARY KEY identity(1,1),
+lastname varchar(50),
+firstname varchar(50),
+city varchar(50),
+state varchar(50),
+zip varchar(10)
+);
+
+INSERT INTO TempTable_Union_InsertInto (lastname,firstname,city,state,zip)
+SELECT lastname, firstname,city,state,zip FROM tbls_customers_un1 WHERE State = 'NY'
+UNION
+SELECT lastname, firstname,city,state,zip FROM tbls_customers_un2 WHERE State = 'NY'
+
+229.
+SELECT 'Main' AS DisCenter, state, count(CustomerID) AS Customers FROM Customers
+GROUP BY state
+UNION
+SELECT 'Main' AS DisCenter, state, count(CustomerID) AS Customers FROM tbls_customers_un2
+GROUP BY state ORDER BY State
+
+230.
+SELECT 'Main' AS DisCenter, state, count(CustomerID) AS Customers FROM tbls_customers_un1
+WHERE State in (SELECT state from tbls_customers_un2) GROUP BY state
+UNION
+SELECT 'Main' AS DisCenter, state, count(CustomerID) AS Customers FROM tbls_customers_un2
+GROUP BY state ORDER BY State
+
+231.
+SELECT lastname,firstname,city,state,zip,'customer' AS TypeOfContact FROM customers
+UNION
+SELECT companyname,contactname,city,state,zip,'supplier' FROM Suppliers
+
+
+Chapter 22 Zihan Zhao
+
+234.
+SELECT OrderID,Count(*) AS NumberofDuplicates FROM tbls_Orders GROUP BY OrderID
+HAVING count(*) >1
+
+235.
+SELECT OrderID,CustomerID,Count(*) AS NumberofDuplicates FROM tbls_Orders
+GROUP BY OrderID,CustomerID HAVING count(*) >1
+
+236.
+SELECT Count(*) AS NumberofDuplicates, orderid,customerid,salesrepid,shipperid,orderdate,requireddate,shippeddate,shippingcost
+FROM tbls_Orders
+GROUP BY orderid,customerid,salesrepid,shipperid,orderdate,requireddate,shippeddate,shippingcost
+HAVING count(*) >1
+
+237.
+SELECT * FROM tbls_Orders WHERE OrderID IN (SELECT OrderID FROM tbls_Orders GROUP BY OrderID HAVING count(*) >1) ORDER BY OrderID
+
+239.
+SELECT * FROM tbls_Orders WHERE CustomerID NOT IN (SELECT CustomerID from Customers)
+
+240.
+SELECT * FROM tbls_Orders LEFT JOIN Customers ON tbls_Orders.CustomerID = Customers.CustomerID WHERE Customers.CustomerID is NULL
+
+241.
+Drop TABLE if exists tbls_Orders1 SELECT * INTO tbls_Orders1 FROM tbls_Orders
+
+DELETE FROM tbls_Orders1 WHERE CustomerID NOT IN(SELECT CustomerID FROM Customers)
+
+242.
+Drop TABLE if exists tbls_Orders2 SELECT * INTO tbls_Orders2 FROM tbls_Orders
+
+DELETE tbls_Orders2 FROM tbls_Orders2 
+LEFT JOIN Customers ON tbls_Orders2.CustomerID = Customers.CustomerID WHERE(Customers.CustomerID is null)
+
+243.
+SELECT * FROM Customers WHERE CustomerID NOT IN (SELECT CustomerID from tbls_Orders)
+
+244.
+SELECT * FROM Customers WHERE CustomerID NOT IN (SELECT CustomerID from tbls_Orders WHERE OrderDate BETWEEN '2013/1/1' AND '2013/12/31')
+
+245.
+SELECT * FROM Customers WHERE CustomerID IN (SELECT CustomerID from tbls_Orders)
+
+246.
+SELECT * FROM Customers WHERE CustomerID NOT IN (SELECT CustomerID from tbls_Orders WHERE DATEPART(q,Orderdate) = 4 AND year(OrderDate) = 2013)
+

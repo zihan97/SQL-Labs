@@ -1,0 +1,205 @@
+Chapter 17 Zihan Zhao
+
+1. select Product_ID, count(Product_ID) as TotalProductUnitsSold from Purchases group by Product_ID order by TotalProductUnitsSold DESC
+
+2. select Product_ID, sum(SalesPrice) as TotalSales from Purchases group by Product_ID order by TotalSales DESC
+
+3. select Employee_ID, min(SalesPrice) as MinSalesPrice, avg(SalesPrice) as AvgSales, max(SalesPrice) as MaxSalesPrice from Purchases group by Employee_ID 
+ 
+4. select Employee_ID, min(SalesPrice) as MinSalesPrice, avg(SalesPrice) as AvgSales, max(SalesPrice) as MaxSalesPrice from Purchases
+where Employee_ID not in (109, 111, 113) group by Employee_ID having avg(SalesPrice) >= 38000 order by AvgSales DESC
+
+5. select Product_ID, Employee_ID, sum(SalesPrice) as TotalSales from Purchases group by Product_ID, Employee_ID 
+
+Chapter 18 Zihan Zhao
+
+1. select Supplier_ID, count(Quantities_per_Order) as PartCount from Parts_Materials group by Supplier_ID order by PartCount DESC
+
+2. select min(SalesPrice) as MinSalesPrice, avg(SalesPrice) as AvgSales, max(SalesPrice) as MaxSalesPrice, sum(SalesPrice) as TotalSales from Purchases 
+
+3. select Product_ID, min(SalesPrice) as MinSalesPrice, avg(SalesPrice) as AvgSales, max(SalesPrice) as MaxSalesPrice, 
+sum(SalesPrice) as TotalSales from Purchases group by Product_ID order by Product_ID
+ 
+4. select Product_ID, min(SalesPrice) as MinSalesPrice, avg(SalesPrice) as AvgSales, max(SalesPrice) as MaxSalesPrice, 
+sum(SalesPrice) as TotalSales from Purchases where Product_ID not between 1 and 9  group by Product_ID order by Product_ID
+
+5. select Product_ID, min(SalesPrice) as MinSalesPrice, avg(SalesPrice) as AvgSales, max(SalesPrice) as MaxSalesPrice, 
+sum(SalesPrice) as TotalSales from Purchases where Product_ID not between 1 and 9 group by Product_ID having sum(SalesPrice) > 3000000 order by Product_ID
+
+Chapter 19 Zihan Zhao
+
+1. select *  from (select Product_ID, Year, SalesPrice from Purchases) as Crosstab
+pivot (sum(SalesPrice) for Year in ([2015], [2016], [2017])) as CrossTabTable order by Product_ID
+
+2. select *  from (select Product_ID, Year, SalesPrice from Purchases where Product_ID not in (3, 5, 8)) as Crosstab
+pivot (sum(SalesPrice) for Year in ([2015], [2016], [2017])) as CrossTabTable order by Product_ID
+
+3. select *  from (select Product_ID, Year, iif(SalesPrice >= 40000, SalesPrice*0.9, SalesPrice*0.95) as SalesPrice from Purchases where Product_ID not in (3, 5, 8)) as Crosstab
+pivot ( sum(SalesPrice) for Year in ([2015], [2016], [2017])) as CrossTabTable order by Product_ID
+
+4.  select *  from (select Product_ID, Year, iif(SalesPrice >= 40000, SalesPrice*0.9, SalesPrice*0.95) as SalesPrice from Purchases where Product_ID not in (3, 5, 8)) as Crosstab
+pivot ( sum(SalesPrice) for Year in ([2016], [2017])) as CrossTabTable order by Product_ID
+
+5. select * from (select case
+when SalesPrice > 45000 then 'Price > 45000'
+when SalesPrice > 25000 and SalesPrice < 35000 then 'Price 25000 - 35000'
+when SalesPrice < 25000 then 'Price < 25000'
+when SalesPrice < 45000 and SalesPrice > 35000 then 'Price 35000 - 45000'
+end as PriceRange, Year, SalesPrice from Purchases) as Crosstab pivot (sum(SalesPrice) for Year in ([2015], [2016], [2017])) as CrossTabTable
+
+Chapter 20 Zihan Zhao
+
+1. select PartLabel, Name, iif([PartLabel] in ('Door1', 'Door2', 'Door4'), Cost*0.8, Cost) as ProductCost from Parts_Materials
+
+2. select PartLabel, Name, case when PartLabel in ('Door1', 'Door2', 'Door4') then Cost*0.8
+when PartLabel not in ('Door1', 'Door2', 'Door4') then cost end as ProductCost from Parts_Materials
+
+3. select PartLabel, Name, Quantities_per_order, case when Quantities_per_order <= 2 then Cost*0.9 
+when Quantities_per_order between 3 and 7 then Cost*0.8 when Quantities_per_order >= 8 then Cost*0.7 end as NewProductPrice from Parts_Materials
+
+4.  select PartLabel, Name, Quantities_per_order, case when (Cost*Quantities_per_order) < 30 then Cost*0.75
+when (Cost*Quantities_per_order) between 30 and 100 then Cost*0.70 when (Cost*Quantities_per_order) >= 100 then Cost*0.65 end as ProductPrice from Parts_Materials
+
+5.  select PartLabel, Name, Quantities_per_order, case when (Cost*Quantities_per_order) < 30 then '25%'
+when (Cost*Quantities_per_order) between 30 and 100 then '30%' when (Cost*Quantities_per_order) >= 100 then '35%' end as ProductDiscount from Parts_Materials
+
+Chapter 21 Zihan Zhao
+
+1. select Owner, County, State from Suppliers Union select Name, County, State from Customer
+
+2.Create table Supplier_Customer ([Owner] nvarchar(212), [County] nvarchar(212), [State] nvarchar(212)); 
+insert into Supplier_Customer (Owner, County, State) select Owner, County, State from Suppliers Union select Name, County, State from Customer
+
+3. select 'Upgrade' as Feature, Vehicle, count(Vehicle) as NumberOfVehicles from Upgrades where Vehicle <> 'NULL' group by Vehicle union
+select 'Warranty' as Feature, Vehicle, count(Vehicle) as NumberOfVehicles from Warranty where Vehicle <> 'NULL' group by Vehicle 
+
+4. select Vehicle, count(Vehicle) as NumberOfVehicles from Upgrades where Vehicle <> 'NULL' group by Vehicle union
+select Vehicle, count(Vehicle) as NumberOfVehicles from Warranty where Vehicle <> 'NULL' group by Vehicle 
+
+5. select Vehicle, count(Vehicle) as NumberOfVehicles from Upgrades group by Vehicle having count(Vehicle) >= 5 union
+select Vehicle, count(Vehicle) as NumberOfVehicles from Warranty where Price between 100 and 200 group by Vehicle having count(Vehicle) >= 5
+
+Chapter 22 Zihan Zhao
+
+1. select * from Customer where ID not in (select Customer_ID from Purchases)
+
+2. select Name, Age, Generation from Customer where ID not in (select Customer_ID from Purchases where Year in (2017, 2018))
+
+3. select * from Purchases where Product_ID not in (select ID from Product)
+
+4. select * from Product where ID in (select Product_ID from Purchases group by Product_ID having count(*) > 1)
+
+5. select * from Purchases where Customer_ID in (select ID from Customer where Age between 35 and 45)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

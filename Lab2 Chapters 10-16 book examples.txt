@@ -1,0 +1,241 @@
+
+Chapter 10 Zihan Zhao
+
+109.
+SELECT * FROM Customers WHERE lastname = 'Delaney'
+
+110.
+SELECT * FROM Orders WHERE OrderID = 972
+
+111.
+SELECT OrderID,OrderDate,ShippedDate,ShippingCost FROM Orders
+WHERE OrderDate > '2013-06-30' ORDER BY OrderDate
+
+112.
+SELECT OrderID,OrderDate,ShippedDate,ShippingCost FROM Orders
+WHERE OrderDate >= '2013-06-30' ORDER BY OrderDate
+
+113.
+SELECT OrderID,OrderDate,ShippedDate,ShippingCost FROM Orders
+WHERE ShippingCost < 35 ORDER BY ShippingCost DESC
+
+114.
+SELECT OrderID,OrderDate,ShippedDate,ShippingCost FROM Orders
+WHERE ShippingCost <= 35 ORDER BY ShippingCost DESC
+
+115.
+SELECT OrderID,OrderDate,ShippedDate,ShippingCost FROM Orders
+WHERE ShippingCost <> 35 ORDER BY ShippingCost DESC
+
+116.
+SELECT OrderID,OrderDate,ShippedDate,ShippingCost FROM Orders
+WHERE OrderDate > '2013-06-30' AND ShippingCost < 35 ORDER BY ShippingCost DESC
+
+
+Chapter 11 Zihan Zhao
+
+119.
+SELECT productname,productunitprice FROM products WHERE productunitprice BETWEEN 15 AND 18
+ORDER BY ProductUnitPrice
+
+120.
+SELECT OrderID,OrderDate,Shippeddate FROM orders
+WHERE orderdate BETWEEN '2012-06-15' AND '2013-06-15' ORDER BY orderdate DESC
+
+121.
+SELECT OrderID,OrderDate,Shippeddate FROM orders
+WHERE year(orderdate) BETWEEN 2013 AND 2014 ORDER BY orderdate DESC
+
+122.
+SELECT productname,productunitprice FROM products
+WHERE productunitprice NOT BETWEEN 10 AND 40 ORDER BY productunitprice ASC
+
+123.
+SELECT productname,productunitprice FROM products
+WHERE productunitprice BETWEEN 15 AND 18 ORDER BY productunitprice ASC
+
+SELECT productname,productunitprice FROM products
+WHERE productunitprice >= 15 AND productunitprice <= 18 ORDER BY productunitprice ASC
+
+Chapter 12 Zihan Zhao
+
+126.
+SELECT lastname,firstname,city FROM customers
+WHERE city = 'New York' OR city = 'Boston' OR city = 'Chicago' OR city = 'Los Angeles' OR city = 'Dallas'
+
+SELECT lastname,firstname,city FROM customers
+WHERE city in ('New York', 'Boston','Chicago','Los Angeles','Dallas')
+
+127.
+SELECT lastname,firstname,city FROM customers
+WHERE city not in ('New York', 'Boston','Chicago','Los Angeles','Dallas')
+
+128.
+SELECT productname,quantityperunit,productunitprice FROM products
+WHERE productunitprice in (15,19,22,23,42)
+
+129.
+SELECT orderid,orderdate,shippeddate,shippingcost FROM orders
+WHERE orderdate IN ('2012-6-1','2012-7-1','2012-8-1')
+
+130.
+SELECT lastname,firstname,address FROM customers 
+WHERE 'Mary' IN (firstname,lastname,address)
+
+131.
+SELECT orderid,orderdate,shippeddate from orders
+WHERE orderid IN (SELECT orderid FROM productsorders WHERE (discount) = 0)
+
+132.
+SELECT orderid,orderdate,shippeddate from orders
+WHERE orderid IN (SELECT orderid FROM productsorders GROUP BY orderid HAVING sum(Discount)=0)
+
+133.
+SELECT * FROM customers WHERE customerid NOT IN
+(SELECT customerid FROM orders WHERE orderdate BETWEEN '2013-6-1' AND '2013-12-31')
+
+134.
+SELECT * FROM customers WHERE customerid NOT IN
+(SELECT customerid FROM orders WHERE year(orderdate)= 2013)
+
+Chapter 13 Zihan Zhao
+
+137.
+SELECT city FROM customers
+
+138.
+SELECT DISTINCT city FROM customers
+
+139.
+SELECT firstname, state FROM customers WHERE firstname='John'
+
+SELECT DISTINCT firstname, state FROM customers WHERE firstname='John'
+
+140.
+SELECT contacttitle, count(contacttitle) AS CountNumber FROM suppliers GROUP BY ContactTitle
+
+
+Chapter 14 Zihan Zhao 
+
+143.
+SELECT TOP 5 productname, unitsinstock,unitsonorder FROM products
+
+144.
+SELECT TOP 5 productname, unitsinstock,unitsonorder FROM products ORDER BY unitsinstock DESC
+
+145.
+SELECT TOP 10 PERCENT productname, unitsinstock,unitsonorder FROM products
+ORDER BY productunitprice DESC
+
+146.
+SELECT TOP 5 lastname, firstname, dateofhire FROM salesreps
+ORDER BY dateofhire DESC
+
+147.
+SELECT TOP 10 orderid, sum(([unitprice]*[quantity])) AS orderamount FROM productsorders
+GROUP BY orderid ORDER BY SUM(([unitprice]*[quantity])) DESC
+
+148.
+SELECT TOP 10 orderid,productid,(unitprice*quantity) AS orderamount FROM ProductsOrders
+WHERE (productid = 2) ORDER BY (unitprice*quantity) DESC
+
+
+Chapter 15 Zihan Zhao
+
+151.
+SELECT productname,productunitprice + 2 AS productprice FROM products
+
+152.
+SELECT productname,productunitprice * (1.02) AS productprice FROM products
+
+153.
+SELECT productname,unitsinstock,unitsonorder,(unitsinstock + unitsonorder) AS TotalUnits
+FROM products
+
+154.
+SELECT orderid, SUM([unitprice]*[quantity]) AS OrderSubtotal
+FROM Productsorders GROUP BY orderid
+
+155.
+SELECT productname,productunitprice*(1-0.2) as PromotionalPrice FROM products
+
+156.
+SELECT productunitprice*(1+0.2) as ProductPrice FROM products
+
+157.
+SELECT productname,
+CASE
+WHEN supplierid = 1 THEN productunitprice*(1-0.2)
+WHEN supplierid = 2 THEN ProductUnitPrice*(1-0.15)
+WHEN supplierid = 3 THEN ProductUnitPrice*(1-0.18)
+WHEN supplierid = 4 THEN ProductUnitPrice*(1-0.25)
+ELSE productunitprice*(1-0.1)
+END AS ProductPrice FROM products
+
+158.
+SELECT salesreps.lastname, iif(sum([unitprice]*[quantity])> 5000,'Bonus','No Bonus') AS Bonus
+FROM
+(SalesReps INNER JOIN orders ON SalesReps.SalesRepID = Orders.SalesRepID)
+INNER JOIN ProductsOrders ON Orders.OrderID = ProductsOrders.OrderID
+WHERE (((orders.orderdate) BETWEEN '2014/1/1' AND '2014/12/31'))
+GROUP BY SalesReps.LastName
+
+159.
+SELECT Orderid, SUM(([unitprice]*[quantity])*[discount]) AS OrderDiscount 
+FROM ProductsOrders GROUP BY orderid
+
+160.
+SELECT AVG([unitprice]*[quantity]*[discount]) AS AverageOrderDiscount FROM ProductsOrders
+
+SELECT AVG([unitprice]*[quantity]) AS AverageOrderAmount FROM ProductsOrders
+
+SELECT cast(AVG([unitprice]*[quantity]*[discount]) AS int) AverageOrderDiscount
+FROM ProductsOrders
+
+SELECT convert(int, AVG([unitprice]*[quantity]*[discount])) AS AverageOrderDiscount
+FROM ProductsOrders
+
+161.
+SELECT orderid, SUM((unitprice*quantity)*(1-discount)) AS OrderTotal
+INTO ArchivedOrders FROM ProductsOrders GROUP BY orderid
+
+
+Chapter 16 Zihan Zhao
+
+164.
+SELECT (address+city+state+zip) AS FullAddress FROM Customers
+
+165.
+SELECT (address+' '+ city+ + ' ' + state+ ' '+ zip) AS FullAddress FROM Customers
+
+166.
+SELECT 'Dear' + ' ' + (lastname + ' ' + firstname) + '.' + 'It is our pleasure to announce that we reviewed your resume, and we have set up an interview time for you. Can you please verify that your address is' + ' ' + (address+' '+city+' '+state+' '+zip) + 'to send you corporate policy details and directions?'
+ AS CustomerLetter
+ FROM Customers
+
+ 167.
+ SELECT 'Dear'+ ' '+(lastname+' '+left(firstname,1))+'.'+' '+'Please complete the encloused forms so that we can ship your orders to your country.' AS CustomerLetter
+ FROM customers
+
+ 168.
+ SELECT 'Dear' + ' '+upper(left(lastname,1))+substring(lastname,2,50)+' '+firstname+'.'+' '+'Please complete the encloused forms so that we can ship your orders to your country.' AS CustomerLetter
+ FROM customers
+
+ 169.
+ SELECT OrderDate + 'with' + Shippingcost+'shipping cost' FROM ORDERS
+
+ SELECT CONCAT(orderdate,' with ',shippingcost,' shipping cost') AS LetterToTheCustomer
+ FROM Orders
+
+ 170.
+ SELECT IIF(([State]='NY'),[companyname]+' '+[contacttitle]+' '+[contactname],[contacttitle]+' '+[contactname]) As MailTo FROM suppliers
+
+ 171.
+ SELECT
+ CASE
+ WHEN city = 'Boston' THEN 'Dear' +' '+[contactname]+','+' '+'for your current sale we offer a 10% discount in' + [city]
+ WHEN city = 'Dallas' THEN 'Dear' +' '+[contactname]+','+' '+'for your current sale we offer a 25% discount in' + [city]
+ WHEN city = 'New York' THEN 'Dear' +' '+[contactname]+','+' '+'for your current sale we offer a 30% discount in' + [city]
+ END AS SupplierLetter FROM Suppliers
+
+

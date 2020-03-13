@@ -1,0 +1,407 @@
+Chapter 23 Zihan Zhao
+
+249.
+select productID, productname, productunitprice, SKU from tbls_ProductsN
+where SKU IS NULL
+
+250.
+select ProductID, productname, productunitprice, ISNULL(SKU, 'Nothing') AS SKUCheck
+from tbls_ProductsN order by SKU
+
+251.
+select productID, productname, (productunitprice*quantityperunit) AS Subtotal
+from tbls_ProductsN order by (productunitprice*quantityperunit) DESC
+
+252.
+select SUM(productunitprice*quantityperunit) AS Total from tbls_ProductsN
+
+253.
+select Count(SKU) As CountSKUs from tbls_ProductsN
+select Count(ProductID) As CountSKUs from tbls_ProductsN
+select Count(*) As CountRecords from tbls_ProductsN
+
+254.
+select productID, productname, productunitprice, SKU from tbls_ProductsN
+where SKU IS NOT NULL
+
+255.
+SELECT * INTO temp_tbls_ProductsN from tbls_ProductsN
+update temp_tbls_ProductsN set SKU = 'NA' where SKU IS NULL
+
+Chapter 24 Zihan Zhao
+
+258.
+select cast(245.234 as TinyInt) as ConvertedNumber 
+select convert(TinyInt, 245.234) as ConvertedNumber
+select ProductName, QuantityPerUnit, convert(TinyInt, ProductUnitPrice) as ProductPrice,
+UnitsInStock from Products
+
+259.
+select cast('November 21 2014' as Date) as ConvertedDate
+select convert(date, 'November 21 2014') as ConvertedDate
+select year(cast('November 21 2014')) as ConvertedDate
+
+260.
+select cast(12456 as char(5)) as ConvertedText
+select convert(char(5), 12456) as ConvertedText
+
+Chapter 25 Zihan Zhao
+
+264.
+select Upper(lastname) as LastName, Upper(firstname) as FirstName, city, state, zip from customers
+
+265.
+select upper(left(lastname, 1) + substring (lastname, 2, 50) as LastName,
+city, state, zip from Customers
+
+266.
+select lower(lastname) as LastName, lower(firstname) as Firstname, city, state, zip
+from customers
+
+267. 
+select productid, productname, left(sku, 4) as SKU4 from Products
+
+268.
+select productid, productname, right(sku, 4) as SKU4 from Products
+
+269.
+select productid, productname, len(sku) as CountSKUChars from Products
+
+270. 
+select productid, productname, sku, charindex('-', sku, 1) as PartSKU from Products
+
+271.
+select productid, productnane, sku, charindex('', sku, 1) as PartSKU from Products
+where charindex ('', sku, 1) <>0 
+
+272.
+select substring (productname, 5, 5) from Products
+
+273.
+select productid, productname, sku, charindex('-', sku) as PartSKU from Products
+select productid, productname, sku, left(sku, charindex('-',sku)) as PartSKU from Products
+select charindex ('-', sku) as ParkSKU from Products
+select productid, productname, sku, left(sku, charindex('-',sku), -1) as PartSKU from Products
+where charindex('-', sku) > 0 
+
+274.
+select productid, productname, sku, left(sku, charindex('', sku)) as PartSKU
+from Products where charindex ('', sku) <> 0 
+
+275.
+select productid, ltrim(productname) as LeftTrimmedName, sku from Products
+
+276.
+select productid, Rtrim(productname) as RightTrimmedName, sku from Products
+
+277.
+select productid, (''+productname +'') as SpacedName, sku from Products
+
+278.
+select productid, (space(10) + productname + space(10)) as SpaceName,
+sku from Products
+
+279.
+select productid, productname, sku from Products where left(sku, 4) = 'PDK-'
+SELECT productid, productname, replace(sku, 'pdk-', 'pds-') as skuUpdated from Products where left(sku, 4) = 'PDK-'
+
+280.
+SELECT productid, reverse(sku) as ReverseSKU from Products
+
+Chapter 26 Zihan Zhao
+
+283.
+select * from Orders where OrderDate between '2014/1/1' and '2014/6/30' order by OrderDate ASC
+select * from Orders where OrderDate >= '2014/1/1' and OrderDate <= '2014/6/30' order by OrderDate
+
+284.
+select * from Orders where rderDate <= '2014/1/1' or OrderDate >= '2014/6/30' order by OrderDate
+
+285.
+select GetDate() as CurrentTimeAndDate
+
+286.
+select customerID, max(OrderDate) as LastestOrder from Orders group by customerID
+select lastname, Max(Orders.OrderDate) as MaxOfOrderDate from Customers INNER JOIN Orders on Customers.CustomerID = Orders.CustomerID
+group by lastname
+select Customers.CustomerID, Customers.LastName, Customers.FirstName,
+max(Orders.OrderDate) as LatestOrderDate from Customers INNER JOIN Orders on 
+Customers.CustomerID = Orders.CustomerID group by Customers.CustomerID, Customers.LastName, Customer.FirstName
+
+287. 
+select DateDiff(d, '2014/5/15', '2014/6/30') as NumberOfDays
+
+288.
+select datapart(dw, orderdate) as BusinessDay, Count(OrderID) as NumberOfOrders from Orders
+where year(orderdate) = 2014 AND datepart(q, orderdate) = 2 and datepart(dw, orderdate) in (2, 3, 4, 5, 6)
+group by datepart(dw, orderdate)
+
+289.
+select datepart(q, orderdate) as Quarter, datepart (dw, orderdate) as NonBusinessDay, Count(OrderID) as NumberOfOrders from Orders
+where year(orderdate) = 2014 and datepart (dw, orderdate) in (1, 7) GROUP BY datepart(q, orderdate), datepart(dw, orderdate)
+
+290.
+select * from orders where DatePart(m, [Orderdate]) = 6 and year(Orderdate) = 2014 order by OrderDate
+select * from Orders where OrderDate between '2014/6/1' and '2014/6/30' order by OrderDate ASC
+
+291.
+select DatePart (d, OrderDate) as Day, Count(OrderID) as NumberOfOrders from Orders
+where Year([OrderDate]) = 2014 and DatePart(m, [OrderDate]) = 6 group by DatePart (d, [OrderDate])
+order by DatePart(d, [OrderDate])
+
+292.
+select DatePart(ww, [OrderDate]) as Week, Count(OrderID) as NumberOfOrders from Orders
+where (((Year([OrderDate]))=2014)) group by DatePart(ww, [OrderDate])
+
+293.
+select DatePart(m, [OrerDate]) as Month, DatePart (dw, [OrderDate]) as Day, count(OrderID) as NumberOfOrders from Orders
+where year(OrderDate) = 2014 and datepart(q, ([OrderDate])) = 1 and datepart (w, ([OrderDate])) = 2
+group by DatePart(m , [OrderDate]), DatePart(w, [OrderDate]) order by DatePart(m, [OrderPart])
+
+294.
+select Year([orderdate]) as [Year], datepart(ww, [orderdate]) as week, sum(unitprice* quantity) as OrderTotal
+from View_Invoices where (((DatePart(ww, [orderDate])) = 50)) group by Year([Orderdate]), datepart(ww, [OrderDate])
+
+295.
+select Year([orderdate]) as [Year], sum(unitprice* quantity) as OrderTotal from View_Invoices
+group by Year(OrderDate)
+select Year([orderdate]) as [Year], sum(unitprice* quantity) as OrderTotal from View_Invoices
+group by datepart(yyyy, OrderDate)
+
+296.
+select datepart(q, [OrderDate]) as Quanter, sum(unitprice* quantity) as OrderTotal from View_Invoices
+where Year(orderdate) = 2014 group by DatePart(q, [OrderDate])
+
+297.
+select month([orderdate]) as [Month], sum(unitprice* quantity) as OrderTotal,
+sum([unitprice]*[quantity]*[Discount]) as TotalDiscount from View_Invoices
+where year(orderdate) = 2014 group by month(OrderDate) order by month(OrderDate)
+
+select datename(m, [orderdate]) as [Month], sum(unitprice* quantity) as OrderTotal,
+sum([unitprice]*[quantity]*[Discount]) as TotalDiscount from View_Invoices
+where year(orderdate) = 2014 group by datename(m, OrderDate), month([OrderDate]) order by month(OrderDate)
+
+select datepart(m, [orderdate]) as [Month], sum(unitprice* quantity) as OrderTotal,
+sum([unitprice]*[quantity]*[Discount]) as TotalDiscount from View_Invoices
+where year(orderdate) = 2014 group by datepart(m, OrderDate), month([OrderDate]) order by datepart(m, OrderDate)
+
+298.
+select datapart(dw, orderdate) as Day, Count(OrderID) as NumberOfOrders from Orders
+where (((year([orderdate])) = 2014)) group by datepart(dw, [orderdate])
+
+select dataname(dw, orderdate) as Day, Count(OrderID) as NumberOfOrders from Orders
+where (((year([orderdate])) = 2014)) group by datename(dw, [orderdate])
+
+299.
+select datapart(y, orderdate) as Day, Count(OrderID) as NumberOfOrders from Orders
+where year([orderdate]) = 2014 group by datepart(y, [orderdate]) order by datepart(y, [orderdate])
+
+300. 
+select OrderID, CustomerID, OrderDate from Orders where OrderDate like '%-10-22'
+
+301.
+select firstname, lastname, DateAdd(yyyy, 20, DateOfHired) as Anniversary20yr from SalesReps
+
+302.
+select firstname, lastname, title, datepart(d, dateofbirth) as DateOfBirth from SalesReps
+where datepart(m, dateofbirth) = 4
+
+303.
+select firstname, lastname, datediff(yyyy, DateOfHired, GetDate()) as YearEmployed from SalesReps
+
+304.
+select firstname, lastname,title, datediff(yyyy, DateOfBirth, GetDate()) as Age from SalesReps
+
+305.
+select orderID, datediff(d, orderdate, shippeddate) as CycleTime from Orders where 
+year(orderdate) = 2014 and month(orderdate) = 9
+
+306.
+select orderID, dateadd(d, 2, orderdate) as PolicyShipmentDate from Orders where 
+year(orderdate) = 2014 and month(orderdate) = 9
+
+Chapter 27 Zihan Zhao
+
+310.
+SELECT * FROM  tbls_Customers_Upd WHERE lastname = 'Demizio' AND firstname = 'Michael'
+
+UPDATE tbls_Customers_Upd SET Address = '12 Lark Street' WHERE lastname = 'Demizio' AND firstname = 'Michael'
+
+311.
+SELECT * FROM  tbls_Customers_Upd WHERE lastname = 'Demizio' AND firstname = 'Michael'
+
+UPDATE tbls_Customers_Upd SET Address = '12 Lark Street', city = 'Albany' WHERE lastname = 'Demizio' AND firstname = 'Michael'
+
+312.
+SELECT * FROM  tbls_Customers_Upd WHERE city = 'Denver'
+
+UPDATE tbls_Customers_Upd SET zip = '22215' WHERE city = 'Denver'
+
+313.
+SELECT * FROM  tbls_Customers_Upd WHERE city = 'Denver'
+
+UPDATE tbls_Customers_Upd SET zip = '22730',city = 'Tucson', state = 'AZ' WHERE city = 'Denver'
+
+314.
+SELECT * FROM tblS_ViewSuppliers WHERE supplierID = 1
+
+UPDATE tblS_ViewSuppliers SET ProductUnitPrice = ProductUnitPrice * (1+0.05) WHERE SupplierID = 1
+
+315.
+UPDATE tblS_Products_UPD SET ProductUnitPrice =  CASE
+WHERE supplierid=1 THEN ProductUnitPrice*(1.1)
+WHERE supplierid=2 THEN ProductUnitPrice*(1.05)
+WHERE supplierid=3 THEN ProductUnitPrice*(1.1)
+WHERE supplierid=4 THEN ProductUnitPrice*(1.05)
+WHERE supplierid=5 THEN ProductUnitPrice
+WHERE supplierid=6 THEN ProductUnitPrice*(1.02)
+WHERE supplierid=7 THEN ProductUnitPrice*(1.03)
+WHERE supplierid=8 THEN ProductUnitPrice*(1.05)
+WHERE supplierid=9 THEN ProductUnitPrice*(1.15)
+WHERE supplierid=10 THEN ProductUnitPrice*(1.1)
+END
+
+316.
+UPDATE tblS_Products_UPD SET ProductUnitPrice = ProductUnitPrice*(1+ 0.20) WHERE SupplierID IN  (SELECT SupplierID FROM Suppliers WHERE city = 'Boston' or city = 'Denvor')
+
+Chapter 28 Zihan Zhao
+
+320.
+SELECT * FROM tbls_Orders_Del WHERE orderid = 20
+
+DELETE  FROM tbls_Orders_Del WHERE orderid = 20
+
+321.
+SELECT * FROM tbls_Orders_Del WHERE customerid = 2
+
+DELETE FROM tbls_Orders_Del WHERE customerid = 2
+
+322.
+SELECT * FROM tbls_Orders_Del WHERE orderdate BETWEEN "2012/10/15" AND "2012/10/17"
+
+DELETE FROM tbls_Orders_Del WHERE orderdate BETWEEN "2012/10/15" AND "2012/10/17"
+
+323.
+SELECT * FROM tbls_Orders_Del AS T2 WHERE orderid <> (SELECT Max(OrderID)
+FROM FROM tbls_Orders_Del AS T1 WHERE T2.CustomerID = T1.CustomerID AND T2.SalesRepID = T1.SalesRepID AND T2.ShippedID = T1.ShippedID AND T2.OrderDate = T1.OrderDate)
+
+SELECT * FROM tbls_Orders_Del AS T2 WHERE orderid <> (SELECT Min(OrderID)
+FROM tbls_Orders_Del AS T1 WHERE T2.CustomerID = T1.CustomerID AND T2.SalesRepID = T1.SalesRepID AND T2.ShippedID = T1.ShippedID AND T2.OrderDate = T1.OrderDate)
+
+DELETE tbls_Orders_Del FROM tbls_Orders_Del AS T2 WHERE orderid <> (SELECT Max(OrderID)
+FROM FROM tbls_Orders_Del AS T1 WHERE T2.CustomerID = T1.CustomerID AND T2.SalesRepID = T1.SalesRepID AND T2.ShippedID = T1.ShippedID AND T2.OrderDate = T1.OrderDate)
+
+324.
+SELECT * FROM tbls_Orders_Del2 WHERE orderid IN (SELECT OrderID FROM tbls_Orders_Del2
+GROUP BY OrderID, CustomerID, ShipperID, OrderDate Having count(*)>1)
+
+DELETE FROM tbls_Orders_Del2 WHERE orderid IN (SELECT OrderID FROM tbls_Orders_Del2
+GROUP BY OrderID, CustomerID, ShipperID, OrderDate Having count(*)>1)
+
+325.
+SELECT * INTO TempTable1 FROM tbls_Orders_Del WHERE orderdate Between "2012/8/15" AND "2012/9/15"
+
+DELETE FROM tbls_Orders_Del WHERE orderdate Between "2012/8/15" AND "2012/9/15"
+
+326.
+SELECT * FROM tbls_Orders_Del WHERE CustomerID IN (SELECT CustomerID FROM tbls_Customers_Upd WHERE CITY = "Los Angeles" AND Lastname = "Orlando")
+
+DELETE FROM tbls_Orders_Del WHERE CustomerID IN (SELECT CustomerID FROM tbls_Customers_Upd
+WHERE CITY = "Los Angeles" AND Lastname = "Orlando")
+
+327.
+SELECT * FROM tbls_Orders_Del WHERE OrderID IN (SELECT SUM([productunitprice]*[quantityperunit]) AS TotalOrder
+FROM tblS_Products_UPD GROUP BY OrderID
+Having SUM([productunitprice]*[quantityperunit]) >500)
+
+DELETE FROM tbls_Orders_Del WHERE OrderID IN (SELECT SUM([productunitprice]*[quantityperunit]) AS TotalOrder
+FROM tblS_Products_UPD GROUP BY OrderID 
+Having SUM([productunitprice]*[quantityperunit]) >500)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
